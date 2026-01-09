@@ -11,9 +11,9 @@ npm run test     # Run Vitest tests
 npm run build    # Production build
 ```
 
-## Current Status: Phase 1 Complete ✅
-- **Completed**: Project setup, UI components, database, stores, layout
-- **Next**: Phase 2 - Core Data Layer (CRUD for portfolios/holdings/categories)
+## Current Status: Phase 3 Complete ✅
+- **Completed**: Project setup, UI components, database, stores, layout, CRUD hooks, utilities, portfolio management UI
+- **Next**: Phase 4 - Holdings Management UI (HoldingsTable, AddHoldingModal, CategoryPicker)
 - See `STATUS.md` for detailed checklist
 
 ## Architecture
@@ -62,12 +62,15 @@ src/
 3. Update STATUS.md after each phase
 4. Dark mode is default, Apple/Robinhood-inspired UX
 
-## What's Next (Phase 2)
-1. Seed default categories on first load
-2. Create CRUD hooks: usePortfolios, useHoldings, useCategories
-3. Implement ticker memory system
-4. Create calculation and formatting utilities
-5. Write Phase 2 tests
+## What's Next (Phase 4)
+1. Create HoldingsTable component
+2. Create HoldingRow component
+3. Create AddHoldingModal
+4. Create EditHoldingModal
+5. Create CategoryPicker and CategoryBadge components
+6. Implement cost toggle (avg per unit / total)
+7. Add sorting to holdings table
+8. Write Phase 4 tests
 
 ## Full Plan Reference
 See `.claude/plans/groovy-soaring-fox.md` for complete 8-phase implementation plan

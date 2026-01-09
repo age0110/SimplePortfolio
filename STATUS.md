@@ -1,8 +1,8 @@
 # Portfolio Tracker - Development Status
 
-Last Updated: 2026-01-07
-Current Phase: 2
-Current Step: 2.1
+Last Updated: 2026-01-08
+Current Phase: 4
+Current Step: 4.1
 
 ---
 
@@ -24,41 +24,41 @@ Current Step: 2.1
 
 ---
 
-## Phase 2: Core Data Layer
-- [ ] 2.1 Seed default categories on first load
-- [ ] 2.2 Build portfolio Zustand store
-- [ ] 2.3 Create usePortfolios hook (CRUD)
-- [ ] 2.4 Create useHoldings hook (CRUD)
-- [ ] 2.5 Create useCategories hook (CRUD)
-- [ ] 2.6 Implement ticker memory system
-- [ ] 2.7 Create calculation utilities
-- [ ] 2.8 Create formatting utilities
+## Phase 2: Core Data Layer ✅ COMPLETE
+- [x] 2.1 Seed default categories on first load
+- [x] 2.2 Build portfolio Zustand store
+- [x] 2.3 Create usePortfolios hook (CRUD)
+- [x] 2.4 Create useHoldings hook (CRUD)
+- [x] 2.5 Create useCategories hook (CRUD)
+- [x] 2.6 Implement ticker memory system
+- [x] 2.7 Create calculation utilities
+- [x] 2.8 Create formatting utilities
 
-### Phase 2 Tests
-- [ ] Can create/read/update/delete portfolios
-- [ ] Can create/read/update/delete holdings
-- [ ] Can create/read/update/delete categories
-- [ ] Ticker memory stores and retrieves correctly
-- [ ] Calculations (totals, percentages) are accurate
-- [ ] Formatters work for all currencies
+### Phase 2 Tests ✅ ALL PASSED (35/35)
+- [x] Can create/read/update/delete portfolios
+- [x] Can create/read/update/delete holdings
+- [x] Can create/read/update/delete categories
+- [x] Ticker memory stores and retrieves correctly
+- [x] Calculations (totals, percentages) are accurate
+- [x] Formatters work for all currencies
 
 ---
 
-## Phase 3: Portfolio Management UI
-- [ ] 3.1 Create PortfolioList component
-- [ ] 3.2 Create PortfolioCard component
-- [ ] 3.3 Create CreatePortfolioModal
-- [ ] 3.4 Implement portfolio selection (checkboxes)
-- [ ] 3.5 Add UI store for selection state
-- [ ] 3.6 Implement combined vs side-by-side toggle
-- [ ] 3.7 Wire up sidebar to main layout
+## Phase 3: Portfolio Management UI ✅ COMPLETE
+- [x] 3.1 Create PortfolioList component
+- [x] 3.2 Create PortfolioCard component
+- [x] 3.3 Create CreatePortfolioModal
+- [x] 3.4 Implement portfolio selection (checkboxes)
+- [x] 3.5 Add UI store for selection state
+- [x] 3.6 Implement combined vs side-by-side toggle
+- [x] 3.7 Wire up sidebar to main layout
 
-### Phase 3 Tests
-- [ ] Can create new portfolio via modal
-- [ ] Can rename portfolio
-- [ ] Can delete portfolio
-- [ ] Selection persists across renders
-- [ ] Combined/side-by-side toggle works
+### Phase 3 Tests ✅ ALL PASSED (24/24)
+- [x] Can create new portfolio via modal
+- [x] Can rename portfolio
+- [x] Can delete portfolio
+- [x] Selection persists across renders
+- [x] Combined/side-by-side toggle works
 
 ---
 
@@ -172,6 +172,37 @@ Current Step: 2.1
 - Built app shell layout (Header, Sidebar, Layout)
 - All 12 Phase 1 tests passing
 
-### Next Session: Start Phase 2
-Run `npm install` then `npm run dev` to continue.
-Begin with step 2.1: Seed default categories on first load
+### Session 2 (2026-01-08) - Phase 2 Complete
+- Default categories already seeded in initializeDatabase() from Phase 1
+- Created CRUD hooks using dexie-react-hooks:
+  - usePortfolios: Create, read, update, delete portfolios with reactive queries
+  - useHoldings: Full CRUD with form data support, auto-updates ticker memory
+  - useCategories: CRUD with default/custom category separation
+  - useTickerMemory: Auto-categorization system for repeat tickers
+- Created calculation utilities:
+  - Currency conversion (USD, AUD, BTC)
+  - Total cost/value calculations
+  - Percentage calculations
+  - Grouping by category, currency, and asset
+  - Portfolio summaries with enriched holdings
+- Created formatting utilities:
+  - Currency formatting (symbol, decimals, compact mode)
+  - Number formatting with separators
+  - Percentage and quantity formatting
+  - Date formatting
+- All 47 tests passing (12 Phase 1 + 35 Phase 2)
+
+### Session 2 continued - Phase 3 Complete
+- Most of Phase 3 was scaffolded in Phase 1 (Sidebar with portfolio list)
+- Created portfolio components:
+  - CreatePortfolioModal: Full modal with validation, suggestions, loading states
+  - PortfolioCard: Card component showing portfolio summary with menu
+  - ViewModeToggle: Toggle between combined/side-by-side views
+- Updated App.tsx to use new hooks and components:
+  - Integrated usePortfolios, useHoldings, useCategories hooks
+  - Added total value calculation for selected portfolios
+  - Implemented side-by-side view with PortfolioCard grid
+- All 71 tests passing (12 Phase 1 + 35 Phase 2 + 24 Phase 3)
+
+### Next Session: Start Phase 4
+Begin with step 4.1: Create HoldingsTable component
