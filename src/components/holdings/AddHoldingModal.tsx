@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
-import { Plus, DollarSign, Hash, Tag } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Plus, DollarSign, Hash, Tag, Loader2 } from 'lucide-react'
 import { Modal, ModalFooter } from '../ui/Modal'
 import { Input } from '../ui/Input'
 import { Button } from '../ui/Button'
 import { Select } from '../ui/Select'
 import { CategoryPicker } from './CategoryPicker'
+import { fetchCurrentPrice } from '../../services/priceService'
 import type { Category, Currency, HoldingFormData } from '../../types'
 
 interface AddHoldingModalProps {
@@ -41,6 +42,10 @@ export function AddHoldingModal({
   const [suggestedCategoryId, setSuggestedCategoryId] = useState<string | undefined>()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isFetchingPrice, setIsFetchingPrice] = useState(false)
+  const [fetchedPrice, setFetchedPrice] = useState<number | null>(null)
+  const priceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hasUserEditedCost = useRef(false)
 
   // Look up suggested category when ticker changes
   useEffect(() => {
@@ -55,6 +60,46 @@ export function AddHoldingModal({
       setSuggestedCategoryId(undefined)
     }
   }, [ticker, getSuggestedCategory, categoryId])
+
+  // Fetch current price when ticker changes (debounced)
+  useEffect(() => {
+    // Clear previous timeout
+    if (priceTimeoutRef.current) {
+      clearTimeout(priceTimeoutRef.current)
+    }
+
+    const normalizedTicker = ticker.trim().toUpperCase()
+
+    if (!normalizedTicker || normalizedTicker.length < 1) {
+      setFetchedPrice(null)
+      setIsFetchingPrice(false)
+      return
+    }
+
+    setIsFetchingPrice(true)
+
+    // Debounce the fetch by 600ms
+    priceTimeoutRef.current = setTimeout(async () => {
+      const result = await fetchCurrentPrice(normalizedTicker)
+      setIsFetchingPrice(false)
+
+      if (result.price !== null) {
+        setFetchedPrice(result.price)
+        // Auto-fill cost if user hasn't manually edited it
+        if (!hasUserEditedCost.current && !costValue) {
+          setCostValue(result.price.toString())
+        }
+      } else {
+        setFetchedPrice(null)
+      }
+    }, 600)
+
+    return () => {
+      if (priceTimeoutRef.current) {
+        clearTimeout(priceTimeoutRef.current)
+      }
+    }
+  }, [ticker])
 
   // Calculate displayed values
   const quantityNum = parseFloat(quantity) || 0
@@ -122,6 +167,9 @@ export function AddHoldingModal({
       setCategoryId('')
       setSuggestedCategoryId(undefined)
       setErrors({})
+      setFetchedPrice(null)
+      setIsFetchingPrice(false)
+      hasUserEditedCost.current = false
       onClose()
     }
   }
@@ -227,6 +275,7 @@ export function AddHoldingModal({
             placeholder={costType === 'average' ? 'Cost per unit' : 'Total cost'}
             value={costValue}
             onChange={(e) => {
+              hasUserEditedCost.current = true
               setCostValue(e.target.value)
               setErrors((prev) => ({ ...prev, costValue: '' }))
             }}
@@ -234,8 +283,28 @@ export function AddHoldingModal({
             disabled={isSubmitting}
             step="any"
             min="0"
-            leftElement={<DollarSign size={16} />}
+            leftElement={isFetchingPrice ? <Loader2 size={16} className="animate-spin" /> : <DollarSign size={16} />}
           />
+          {/* Current price indicator */}
+          {fetchedPrice !== null && costType === 'average' && (
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-xs text-emerald-400">
+                Current price: ${fetchedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+              {hasUserEditedCost.current && parseFloat(costValue) !== fetchedPrice && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCostValue(fetchedPrice.toString())
+                    hasUserEditedCost.current = false
+                  }}
+                  className="text-xs text-blue-400 hover:text-blue-300 underline"
+                >
+                  Use current price
+                </button>
+              )}
+            </div>
+          )}
           {/* Preview calculation */}
           {quantityNum > 0 && costNum > 0 && (
             <div className="mt-2 text-xs text-white/40">

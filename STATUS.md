@@ -220,5 +220,17 @@ Current Step: 5.1
 - Wired up all components in App.tsx with proper state management
 - All 112 tests passing (12 Phase 1 + 35 Phase 2 + 24 Phase 3 + 41 Phase 4)
 
+### Session 4 (2026-01-10) - Price Service Added
+- Created price service (`src/services/priceService.ts`):
+  - Fetches real-time prices for crypto (CoinGecko API) and stocks/ETFs (Yahoo Finance API)
+  - Supports 20+ major crypto tickers (BTC, ETH, SOL, etc.)
+  - Debounced requests to avoid rate limiting
+- Updated AddHoldingModal:
+  - Auto-fills cost field with current market price when ticker is entered
+  - Shows loading spinner while fetching price
+  - Displays current price in green below cost field
+  - "Use current price" button to reset if user edited the cost
+  - Only auto-fills if user hasn't manually edited the cost field
+
 ### Next Session: Start Phase 5
 Begin with step 5.1: Install and configure Recharts
