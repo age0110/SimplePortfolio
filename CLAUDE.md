@@ -11,9 +11,9 @@ npm run test     # Run Vitest tests
 npm run build    # Production build
 ```
 
-## Current Status: Phase 3 Complete ✅
-- **Completed**: Project setup, UI components, database, stores, layout, CRUD hooks, utilities, portfolio management UI
-- **Next**: Phase 4 - Holdings Management UI (HoldingsTable, AddHoldingModal, CategoryPicker)
+## Current Status: Phase 4 Complete ✅
+- **Completed**: Project setup, UI components, database, stores, layout, CRUD hooks, utilities, portfolio management UI, holdings management UI
+- **Next**: Phase 5 - Visualizations (Recharts, pie charts, allocation views)
 - See `STATUS.md` for detailed checklist
 
 ## Architecture
@@ -62,15 +62,15 @@ src/
 3. Update STATUS.md after each phase
 4. Dark mode is default, Apple/Robinhood-inspired UX
 
-## What's Next (Phase 4)
-1. Create HoldingsTable component
-2. Create HoldingRow component
-3. Create AddHoldingModal
-4. Create EditHoldingModal
-5. Create CategoryPicker and CategoryBadge components
-6. Implement cost toggle (avg per unit / total)
-7. Add sorting to holdings table
-8. Write Phase 4 tests
+## What's Next (Phase 5)
+1. Install and configure Recharts
+2. Create base PieChart component
+3. Create ChartByAsset view
+4. Create ChartByCategory view
+5. Create ChartByCurrency view
+6. Create ChartToggle component
+7. Integrate charts into dashboard
+8. Write Phase 5 tests
 
 ## Full Plan Reference
 See `.claude/plans/groovy-soaring-fox.md` for complete 8-phase implementation plan

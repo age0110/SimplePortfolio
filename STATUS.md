@@ -1,8 +1,8 @@
 # Portfolio Tracker - Development Status
 
-Last Updated: 2026-01-08
-Current Phase: 4
-Current Step: 4.1
+Last Updated: 2026-01-09
+Current Phase: 5
+Current Step: 5.1
 
 ---
 
@@ -62,23 +62,23 @@ Current Step: 4.1
 
 ---
 
-## Phase 4: Holdings Management UI
-- [ ] 4.1 Create HoldingsTable component
-- [ ] 4.2 Create HoldingRow component
-- [ ] 4.3 Create AddHoldingModal
-- [ ] 4.4 Create EditHoldingModal
-- [ ] 4.5 Create CategoryPicker component
-- [ ] 4.6 Create CategoryBadge component
-- [ ] 4.7 Implement cost toggle (avg per unit / total)
-- [ ] 4.8 Add sorting to holdings table
+## Phase 4: Holdings Management UI ✅ COMPLETE
+- [x] 4.1 Create HoldingsTable component
+- [x] 4.2 Create HoldingRow component
+- [x] 4.3 Create AddHoldingModal
+- [x] 4.4 Create EditHoldingModal
+- [x] 4.5 Create CategoryPicker component
+- [x] 4.6 Create CategoryBadge component
+- [x] 4.7 Implement cost toggle (avg per unit / total)
+- [x] 4.8 Add sorting to holdings table
 
-### Phase 4 Tests
-- [ ] Can add holding with all fields
-- [ ] Can edit existing holding
-- [ ] Can delete holding
-- [ ] Category picker shows all categories
-- [ ] Ticker memory suggests category for known tickers
-- [ ] Cost calculation works both ways
+### Phase 4 Tests ✅ ALL PASSED (41/41)
+- [x] Can add holding with all fields
+- [x] Can edit existing holding
+- [x] Can delete holding
+- [x] Category picker shows all categories
+- [x] Ticker memory suggests category for known tickers
+- [x] Cost calculation works both ways
 
 ---
 
@@ -204,5 +204,21 @@ Current Step: 4.1
   - Implemented side-by-side view with PortfolioCard grid
 - All 71 tests passing (12 Phase 1 + 35 Phase 2 + 24 Phase 3)
 
-### Next Session: Start Phase 4
-Begin with step 4.1: Create HoldingsTable component
+### Session 3 (2026-01-09) - Phase 4 Complete
+- Created holdings management components:
+  - CategoryBadge: Colored badge with dot and label
+  - CategoryPicker: Custom dropdown with colored category options, suggested category support
+  - HoldingRow: Table row displaying ticker, quantity, cost, category badge
+  - HoldingsTable: Full table with sorting, cost toggle (avg/total), empty states
+  - AddHoldingModal: Form with ticker, quantity, cost input (per unit/total toggle), currency, category
+  - EditHoldingModal: Pre-filled form with update/delete functionality
+- Implemented features:
+  - Cost toggle (Per Unit / Total) with live calculation preview
+  - Sortable columns (ticker, quantity, cost, category)
+  - Ticker memory integration for auto-suggesting categories
+  - Delete confirmation dialog
+- Wired up all components in App.tsx with proper state management
+- All 112 tests passing (12 Phase 1 + 35 Phase 2 + 24 Phase 3 + 41 Phase 4)
+
+### Next Session: Start Phase 5
+Begin with step 5.1: Install and configure Recharts

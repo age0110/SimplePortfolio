@@ -2,16 +2,19 @@ import { useEffect, useState } from 'react'
 import { Layout } from './components/layout'
 import { Card } from './components/ui'
 import { initializeDatabase } from './db/database'
-import { usePortfolios, useHoldings, useCategories } from './hooks'
+import { usePortfolios, useHoldings, useCategories, useTickerMemory } from './hooks'
 import { useSettingsStore } from './store'
 import { useUIStore } from './store'
 import { CreatePortfolioModal, ViewModeToggle, PortfolioCard } from './components/portfolio'
+import { HoldingsTable, AddHoldingModal, EditHoldingModal } from './components/holdings'
 import { calculateTotalValue, createPortfolioSummaries } from './utils/calculations'
-import { formatCurrency } from './utils/formatters'
+import type { Holding } from './types'
 
 function App() {
   const [isInitialized, setIsInitialized] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showAddHoldingModal, setShowAddHoldingModal] = useState(false)
+  const [editingHolding, setEditingHolding] = useState<Holding | null>(null)
 
   // Initialize database on mount
   useEffect(() => {
@@ -22,8 +25,9 @@ function App() {
 
   // Data hooks
   const { portfolios, createPortfolio, isLoading: portfoliosLoading } = usePortfolios()
-  const { holdings } = useHoldings()
+  const { holdings, createHoldingFromForm, updateHolding, deleteHolding } = useHoldings()
   const { categories } = useCategories()
+  const { getSuggestedCategorySync } = useTickerMemory()
 
   // Settings
   const { displayCurrency, exchangeRates } = useSettingsStore()
@@ -90,32 +94,64 @@ function App() {
           {/* Holdings Section */}
           <div className="lg:col-span-2">
             <Card>
-              <div className="text-center py-12">
-                <div className="w-16 h-16 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
-                  <svg
-                    className="w-8 h-8 text-white/20"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                    />
-                  </svg>
+              {portfolios.length === 0 ? (
+                // No portfolios yet
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
+                    <svg
+                      className="w-8 h-8 text-white/20"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-medium text-white mb-2">No portfolios yet</h3>
+                  <p className="text-sm text-white/40 max-w-sm mx-auto">
+                    Create a portfolio to start tracking your investments.
+                  </p>
                 </div>
-                <h3 className="text-lg font-medium text-white mb-2">
-                  {selectedHoldings.length === 0 ? 'No holdings yet' : 'Holdings'}
-                </h3>
-                <p className="text-sm text-white/40 max-w-sm mx-auto">
-                  {selectedHoldings.length === 0
-                    ? 'Create a portfolio and start adding your holdings to track your investments.'
-                    : `${selectedHoldings.length} holdings worth ${formatCurrency(totalValue, displayCurrency)}`
-                  }
-                </p>
-              </div>
+              ) : selectedPortfolioIds.length === 0 ? (
+                // No portfolio selected
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
+                    <svg
+                      className="w-8 h-8 text-white/20"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-medium text-white mb-2">Select a portfolio</h3>
+                  <p className="text-sm text-white/40 max-w-sm mx-auto">
+                    Choose a portfolio from the sidebar to view and manage holdings.
+                  </p>
+                </div>
+              ) : (
+                // Show holdings table
+                <HoldingsTable
+                  holdings={selectedHoldings}
+                  categories={categories}
+                  displayCurrency={displayCurrency}
+                  onAddHolding={selectedPortfolioIds.length === 1 ? () => setShowAddHoldingModal(true) : undefined}
+                  onEditHolding={(holding) => setEditingHolding(holding)}
+                  onDeleteHolding={(holding) => deleteHolding(holding.id)}
+                  emptyMessage={selectedPortfolioIds.length === 1 ? 'No holdings yet' : 'No holdings in selected portfolios'}
+                />
+              )}
             </Card>
           </div>
 
@@ -161,6 +197,34 @@ function App() {
         onSubmit={async (name) => {
           await createPortfolio({ name })
         }}
+      />
+
+      {/* Add Holding Modal */}
+      {selectedPortfolioIds.length === 1 && (
+        <AddHoldingModal
+          isOpen={showAddHoldingModal}
+          onClose={() => setShowAddHoldingModal(false)}
+          onSubmit={async (data) => {
+            await createHoldingFromForm(data)
+          }}
+          portfolioId={selectedPortfolioIds[0]}
+          categories={categories}
+          getSuggestedCategory={getSuggestedCategorySync}
+        />
+      )}
+
+      {/* Edit Holding Modal */}
+      <EditHoldingModal
+        isOpen={editingHolding !== null}
+        onClose={() => setEditingHolding(null)}
+        onSubmit={async (id, data) => {
+          await updateHolding(id, data)
+        }}
+        onDelete={async (id) => {
+          await deleteHolding(id)
+        }}
+        holding={editingHolding}
+        categories={categories}
       />
     </Layout>
   )

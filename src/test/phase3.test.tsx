@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { db, initializeDatabase, generateId } from '../db/database'
 import { useUIStore } from '../store/useUIStore'
@@ -251,7 +251,7 @@ describe('Phase 3: Portfolio Management UI Tests', () => {
 
   describe('Portfolio Selection (UI Store)', () => {
     it('should select a portfolio', () => {
-      const { selectPortfolio, selectedPortfolioIds } = useUIStore.getState()
+      const { selectPortfolio } = useUIStore.getState()
 
       selectPortfolio('portfolio-1')
 
